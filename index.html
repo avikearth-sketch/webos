@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Liquid WebOS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Default Video Background -->
+  <video id="bg-video" src="default-dark-bg.mp4" autoplay loop muted></video>
+
+  <div class="desktop" id="desktop">
+    
+    <div class="taskbar">
+      <div style="font-weight: bold; letter-spacing: 1px;">🚀 WELCOME</div>
+      <button id="theme-btn" class="theme-btn">🌘 Dark Mode</button>
+      <div id="clock">00:00:00</div>
+    </div>
+
+    <div class="desktop-icons">
+      <div class="icon" onclick="openWindow('notes-window')">
+        <img id="icon-notes" src="icon-notes-dark.png" alt="Notes" class="custom-icon">
+        <span>Notes</span>
+      </div>
+      <div class="icon" onclick="openWindow('music-window')">
+        <img id="icon-music" src="icon-music-dark.png" alt="Music" class="custom-icon">
+        <span>Music</span>
+      </div>
+      <div class="icon" onclick="openWindow('settings-window')">
+        <span class="custom-icon" style="font-size: 32px;">⚙️</span>
+        <span>Settings</span>
+      </div>
+    </div>
+
+    <!-- App 1: Notes -->
+    <div class="window" id="notes-window" style="top: 100px; left: 150px;">
+      <!-- Refractive Water Layer -->
+      <div class="water-container"><div class="water-level"></div></div>
+      
+      <div class="window-header">
+        <span>Sticky Note</span>
+        <button class="close-btn" onclick="closeWindow('notes-window')"></button>
+      </div>
+      <div class="window-content">
+        <textarea id="sticky-textarea" placeholder="Type here..."></textarea>
+      </div>
+    </div>
+
+    <!-- App 2: Music Player -->
+    <div class="window" id="music-window" style="top: 150px; left: 520px;">
+      <div class="water-container"><div class="water-level"></div></div>
+
+      <div class="window-header">
+        <span>Music Player</span>
+        <button class="close-btn" onclick="closeWindow('music-window')"></button>
+      </div>
+      <div class="window-content">
+        <label style="font-size: 12px; opacity: 0.8;">Load Local Audio File:</label>
+        <input type="file" id="music-upload" accept="audio/*">
+        <audio id="audio-player" controls></audio>
+      </div>
+    </div>
+
+   <!-- App 3: Settings (Separate Dark & Light Wallpapers) -->
+    <div class="window" id="settings-window" style="top: 300px; left: 200px; width: 340px; height: 310px;">
+      <div class="water-container"><div class="water-level"></div></div>
+
+      <div class="window-header">
+        <span>Settings & Wallpapers</span>
+        <button class="close-btn" onclick="closeWindow('settings-window')"></button>
+      </div>
+      <div class="window-content" style="gap: 10px;">
+        <label style="font-size: 12px; font-weight: bold;">🌙 Dark Mode Wallpaper (MP4 or Image):</label>
+        <input type="file" id="dark-bg-upload" accept="image/*, video/mp4">
+
+        <label style="font-size: 12px; font-weight: bold; margin-top: 5px;">☀️ Light Mode Wallpaper (MP4 or Image):</label>
+        <input type="file" id="light-bg-upload" accept="image/*, video/mp4">
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

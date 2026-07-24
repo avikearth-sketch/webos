@@ -1,0 +1,219 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body.dark-theme {
+  --window-bg: rgba(20, 20, 30, 0.4);
+  --text-color: #ffffff;
+}
+
+body.light-theme {
+  --window-bg: rgba(255, 255, 255, 0.4);
+  --text-color: #111111;
+}
+
+#bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+
+.taskbar {
+  width: 100%;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  color: white;
+  position: absolute;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Digital HUD / Glowing Glass Style for Clock */
+#clock {
+  font-family: 'Consolas', 'Courier New', monospace; /* Monospace keeps numbers from shifting width */
+  font-size: 15px;
+  font-weight: 700;
+  color: #00ffcc; /* Cyan neon tint */
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(0, 255, 204, 0.6);
+  user-select: none;
+  cursor: pointer;
+}
+
+#clock:hover {
+  background: rgba(0, 255, 204, 0.15);
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+.theme-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.theme-btn:hover { background: rgba(255,255,255,0.3); }
+
+.desktop-icons {
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  z-index: 5;
+}
+
+.icon {
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+  user-select: none;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.icon:hover { background: rgba(255, 255, 255, 0.2); }
+
+.custom-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+  object-fit: contain;
+}
+
+/* App Opening Animation Keyframes */
+@keyframes windowOpenAnim {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.7) translateY(40px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+.window {
+  position: absolute;
+  width: 320px;
+  height: 260px;
+  min-width: 250px;
+  min-height: 200px;
+  background: var(--window-bg);
+  backdrop-filter: blur(8px); 
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+  z-index: 10;
+  resize: both;
+  overflow: hidden; 
+  
+  /* Smooth snap-back when dropping the window */
+  transform-origin: center center;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Disable transition while dragging for instant 1:1 mouse reaction */
+.window.dragging {
+  transition: none; 
+}
+
+/* Hide the old HTML water elements without changing index.html */
+.water-container {
+  display: none !important;
+}
+
+.window-header {
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: move;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  user-select: none;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.close-btn {
+  background: rgba(255, 95, 86, 0.8);
+  border: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.close-btn:hover { background: #ff5f56; }
+
+.window-content {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 2; 
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: var(--text-color);
+  padding: 10px;
+  resize: none;
+  outline: none;
+}
+
+input[type="file"] {
+  color: var(--text-color);
+  background: rgba(0,0,0,0.1);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px dashed rgba(255,255,255,0.4);
+  cursor: pointer;
+  width: 100%;
+}
