@@ -3,15 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Liquid WebOS</title>
+  <title>GlassyOS</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-theme">
 
-  <!-- Default Video Background -->
   <video id="bg-video" src="default-dark-bg.mp4" autoplay loop muted></video>
 
   <div class="desktop" id="desktop">
+
+<div id="snap-preview"></div>
+
+<div class="window-header">
+  <span>Sticky Note</span>
+  <div class="window-controls">
+    <button class="control-btn max-btn" onclick="toggleMaximize('notes-window')"></button>
+    <button class="control-btn close-btn" onclick="closeWindow('notes-window')"></button>
+  </div>
+</div>
     
     <div class="taskbar">
       <div style="font-weight: bold; letter-spacing: 1px;">🚀 WELCOME</div>
@@ -34,10 +43,9 @@
       </div>
     </div>
 
-    <!-- App 1: Notes -->
     <div class="window" id="notes-window" style="top: 100px; left: 150px;">
-      <!-- Refractive Water Layer -->
-      <div class="water-container"><div class="water-level"></div></div>
+
+  
       
       <div class="window-header">
         <span>Sticky Note</span>
@@ -48,9 +56,8 @@
       </div>
     </div>
 
-    <!-- App 2: Music Player -->
     <div class="window" id="music-window" style="top: 150px; left: 520px;">
-      <div class="water-container"><div class="water-level"></div></div>
+   
 
       <div class="window-header">
         <span>Music Player</span>
@@ -63,9 +70,9 @@
       </div>
     </div>
 
-   <!-- App 3: Settings (Separate Dark & Light Wallpapers) -->
+   
     <div class="window" id="settings-window" style="top: 300px; left: 200px; width: 340px; height: 310px;">
-      <div class="water-container"><div class="water-level"></div></div>
+
 
       <div class="window-header">
         <span>Settings & Wallpapers</span>
