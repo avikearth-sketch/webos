@@ -3,29 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GlassyOS</title>
+  <title>Avik's GlassyOS</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-theme">
 
+  
   <video id="bg-video" src="default-dark-bg.mp4" autoplay loop muted></video>
 
   <div class="desktop" id="desktop">
+    <div id="snap-preview"></div>
 
-<div id="snap-preview"></div>
-
-<div class="window-header">
-  <span>Sticky Note</span>
-  <div class="window-controls">
-    <button class="control-btn max-btn" onclick="toggleMaximize('notes-window')"></button>
-    <button class="control-btn close-btn" onclick="closeWindow('notes-window')"></button>
-  </div>
-</div>
-    
-    <div class="taskbar">
-      <div style="font-weight: bold; letter-spacing: 1px;">🚀 WELCOME</div>
-      <button id="theme-btn" class="theme-btn">🌘 Dark Mode</button>
-      <div id="clock">00:00:00</div>
+    <div class="top-bar">
+      <div style="font-weight: bold; letter-spacing: 1px;">🚀 AvikOS</div>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <button id="theme-btn" class="theme-btn">🌘 Dark Mode</button>
+        <div id="clock">00:00:00</div>
+      </div>
     </div>
 
     <div class="desktop-icons">
@@ -43,49 +37,138 @@
       </div>
     </div>
 
-    <div class="window" id="notes-window" style="top: 100px; left: 150px;">
-
-  
-      
+    <div class="window" id="notes-window" style="top: 80px; left: 160px;">
       <div class="window-header">
         <span>Sticky Note</span>
-        <button class="close-btn" onclick="closeWindow('notes-window')"></button>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('notes-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('notes-window')"></button>
+        </div>
       </div>
-      <div class="window-content">
-        <textarea id="sticky-textarea" placeholder="Type here..."></textarea>
-      </div>
+      <div class="window-content"><textarea placeholder="Type notes here..."></textarea></div>
     </div>
 
-    <div class="window" id="music-window" style="top: 150px; left: 520px;">
-   
-
+    <div class="window" id="music-window" style="top: 100px; left: 520px;">
       <div class="window-header">
         <span>Music Player</span>
-        <button class="close-btn" onclick="closeWindow('music-window')"></button>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('music-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('music-window')"></button>
+        </div>
       </div>
       <div class="window-content">
-        <label style="font-size: 12px; opacity: 0.8;">Load Local Audio File:</label>
+        <label style="font-size: 12px; opacity: 0.8;">Load Audio File:</label>
         <input type="file" id="music-upload" accept="audio/*">
-        <audio id="audio-player" controls></audio>
+        <audio id="audio-player" controls style="width: 100%; margin-top: 10px;"></audio>
       </div>
     </div>
 
-   
-    <div class="window" id="settings-window" style="top: 300px; left: 200px; width: 340px; height: 310px;">
-
-
+    <div class="window" id="settings-window" style="top: 380px; left: 160px; width: 340px;">
       <div class="window-header">
-        <span>Settings & Wallpapers</span>
-        <button class="close-btn" onclick="closeWindow('settings-window')"></button>
+        <span>Settings</span>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('settings-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('settings-window')"></button>
+        </div>
       </div>
-      <div class="window-content" style="gap: 10px;">
-        <label style="font-size: 12px; font-weight: bold;">🌙 Dark Mode Wallpaper (MP4 or Image):</label>
+      <div class="window-content" style="gap: 8px;">
+        <label style="font-size: 11px; font-weight: bold;">🌙 Dark Mode Wallpaper:</label>
         <input type="file" id="dark-bg-upload" accept="image/*, video/mp4">
-
-        <label style="font-size: 12px; font-weight: bold; margin-top: 5px;">☀️ Light Mode Wallpaper (MP4 or Image):</label>
+        <label style="font-size: 11px; font-weight: bold;">☀️ Light Mode Wallpaper:</label>
         <input type="file" id="light-bg-upload" accept="image/*, video/mp4">
       </div>
     </div>
+
+    <div class="window" id="terminal-window" style="top: 120px; left: 240px; width: 400px; height: 280px; background: rgba(10, 10, 15, 0.85);">
+      <div class="window-header">
+        <span>Terminal</span>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('terminal-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('terminal-window')"></button>
+        </div>
+      </div>
+      <div class="window-content" style="font-family: monospace; color: #00ff66; padding: 10px; display: flex; flex-direction: column;">
+        <div id="term-output" style="flex-grow: 1; overflow-y: auto; white-space: pre-wrap; font-size: 13px;">Welcome to LiquidOS Terminal v1.0\nType 'help' for commands.\n</div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <span>&gt;</span>
+          <input type="text" id="term-input" style="background: transparent; border: none; color: #00ff66; font-family: monospace; width: 100%; outline: none;" onkeydown="handleTerminalCommand(event)">
+        </div>
+      </div>
+    </div>
+
+    <div class="window" id="calc-window" style="top: 140px; left: 300px; width: 240px; height: 310px;">
+      <div class="window-header">
+        <span>Calculator</span>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('calc-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('calc-window')"></button>
+        </div>
+      </div>
+      <div class="window-content" style="gap: 8px;">
+        <input type="text" id="calc-screen" readonly style="font-size: 20px; text-align: right; font-family: monospace;" value="0">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+          <button class="calc-btn" onclick="calcInput('C')">C</button>
+          <button class="calc-btn" onclick="calcInput('/')">/</button>
+          <button class="calc-btn" onclick="calcInput('*')">*</button>
+          <button class="calc-btn" onclick="calcInput('-')">-</button>
+          <button class="calc-btn" onclick="calcInput('7')">7</button>
+          <button class="calc-btn" onclick="calcInput('8')">8</button>
+          <button class="calc-btn" onclick="calcInput('9')">9</button>
+          <button class="calc-btn" onclick="calcInput('+')">+</button>
+          <button class="calc-btn" onclick="calcInput('4')">4</button>
+          <button class="calc-btn" onclick="calcInput('5')">5</button>
+          <button class="calc-btn" onclick="calcInput('6')">6</button>
+          <button class="calc-btn" onclick="calcEqual()" style="grid-row: span 2; background: rgba(40, 200, 64, 0.5);">=</button>
+          <button class="calc-btn" onclick="calcInput('1')">1</button>
+          <button class="calc-btn" onclick="calcInput('2')">2</button>
+          <button class="calc-btn" onclick="calcInput('3')">3</button>
+          <button class="calc-btn" onclick="calcInput('0')" style="grid-column: span 3;">0</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="window" id="timer-window" style="top: 160px; left: 360px; width: 260px; height: 200px;">
+      <div class="window-header">
+        <span>Stopwatch</span>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('timer-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('timer-window')"></button>
+        </div>
+      </div>
+      <div class="window-content" style="align-items: center; justify-content: center; gap: 15px;">
+        <div id="stopwatch-display" style="font-size: 32px; font-weight: bold; font-family: monospace;">00:00.0</div>
+        <div style="display: flex; gap: 10px;">
+          <button class="theme-btn" onclick="startStopwatch()">Start/Stop</button>
+          <button class="theme-btn" onclick="resetStopwatch()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="window" id="dice-window" style="top: 180px; left: 420px; width: 220px; height: 210px;">
+      <div class="window-header">
+        <span>Dice Roller</span>
+        <div class="window-controls">
+          <button class="control-btn max-btn" onclick="toggleMaximize('dice-window')"></button>
+          <button class="control-btn close-btn" onclick="closeWindow('dice-window')"></button>
+        </div>
+      </div>
+      <div class="window-content" style="align-items: center; justify-content: center; gap: 10px;">
+        <div id="dice-result" style="font-size: 50px;">🎲</div>
+        <button class="theme-btn" onclick="rollDice()">Roll Dice!</button>
+      </div>
+    </div>
+
+    <div class="bottom-taskbar">
+      <div class="taskbar-pins">
+        <button class="taskbar-icon-btn" onclick="openWindow('terminal-window')" title="Terminal">💻</button>
+        <button class="taskbar-icon-btn" onclick="openWindow('calc-window')" title="Calculator">🧮</button>
+        <button class="taskbar-icon-btn" onclick="openWindow('timer-window')" title="Stopwatch">⏱️</button>
+        <button class="taskbar-icon-btn" onclick="openWindow('dice-window')" title="Dice Roller">🎲</button>
+      </div>
+      <div class="taskbar-divider"></div>
+      <div id="taskbar-apps" class="taskbar-apps"></div>
+    </div>
+
   </div>
 
   <script src="script.js"></script>
