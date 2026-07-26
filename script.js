@@ -1,24 +1,74 @@
+// =========================================================
+// SYNTHESIZED WEB AUDIO SOUND SYSTEM (NO MP3 FILES NEEDED)
+// =========================================================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playUISound(type) {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  const now = audioCtx.currentTime;
+
+  if (type === 'open') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  } else if (type === 'close') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(500, now);
+    osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  } else if (type === 'snap') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  }
+}
+
+// --- Clock & Basic Controls ---
 setInterval(() => {
   document.getElementById('clock').innerText = new Date().toLocaleTimeString();
 }, 1000);
 
 function closeWindow(id) {
+  playUISound('close');
   document.getElementById(id).style.display = 'none';
 }
 
 function openWindow(id) {
+  playUISound('open');
   const win = document.getElementById(id);
   win.style.display = 'flex';
   document.querySelectorAll('.window').forEach(w => w.style.zIndex = '10');
   win.style.zIndex = '20';
 
-  // Force popup animation refresh
   win.style.animation = 'none';
-  win.offsetHeight; /* Trigger DOM reflow */
+  win.offsetHeight;
   win.style.animation = 'windowOpenAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
 }
 
-// --- Music Player & Theme Engine logic remains unchanged ---
+function toggleMaximize(id) {
+  const win = document.getElementById(id);
+  win.classList.toggle('maximized');
+  playUISound('snap');
+}
+
+// --- Music Player & Theme logic ---
 document.getElementById('music-upload').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -63,51 +113,47 @@ themeBtn.addEventListener('click', () => {
   applyTheme(currentTheme);
 });
 
-// Settings App Custom Uploads
-document.getElementById('dark-bg-upload').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  themeData.dark.bgUrl = URL.createObjectURL(file);
-  themeData.dark.bgType = file.type.startsWith('video/') ? 'video' : 'image';
-  if (currentTheme === 'dark') applyTheme('dark');
-});
-
-document.getElementById('light-bg-upload').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  themeData.light.bgUrl = URL.createObjectURL(file);
-  themeData.light.bgType = file.type.startsWith('video/') ? 'video' : 'image';
-  if (currentTheme === 'light') applyTheme('light');
-});
-
 
 // =========================================================
-// ULTRA-SMOOTH GPU-ACCELERATED DRAGGING ENGINE
+// GPU DRAGGING + EDGE SNAPPING ENGINE
 // =========================================================
 document.querySelectorAll('.window').forEach(makeDraggable);
 
 function makeDraggable(element) {
   const header = element.querySelector('.window-header');
+  const snapPreview = document.getElementById('snap-preview');
   
   let isDragging = false;
   let startX = 0, startY = 0;
-  let currentX = element.offsetLeft, currentY = element.offsetTop;
-  let targetX = currentX, targetY = currentY;
-  
+  let targetX = element.offsetLeft, targetY = element.offsetTop;
   let velocityX = 0, velocityY = 0;
   let lastMouseX = 0, lastMouseY = 0;
   let animationFrameId = null;
+  let currentSnapZone = null;
+
+  // Double click header to maximize
+  header.ondblclick = () => {
+    element.classList.toggle('maximized');
+    playUISound('snap');
+  };
 
   header.onmousedown = (e) => {
+    if (e.target.classList.contains('control-btn')) return; // Ignore header buttons
+    
     e.preventDefault();
     isDragging = true;
 
-    // Bring clicked window to top
+    // Un-maximize if dragging a maximized window
+    if (element.classList.contains('maximized')) {
+      element.classList.remove('maximized');
+      targetX = e.clientX - 150;
+      targetY = e.clientY - 20;
+    }
+
     document.querySelectorAll('.window').forEach(w => w.style.zIndex = '10');
     element.style.zIndex = '20';
     element.classList.add('dragging');
 
-    // Record initial coordinates
     startX = e.clientX - targetX;
     startY = e.clientY - targetY;
     lastMouseX = e.clientX;
@@ -116,7 +162,6 @@ function makeDraggable(element) {
     document.onmousemove = onMouseMove;
     document.onmouseup = onMouseUp;
 
-    // Start rendering loop on monitor refresh rate
     if (!animationFrameId) {
       animationFrameId = requestAnimationFrame(updatePhysics);
     }
@@ -125,33 +170,52 @@ function makeDraggable(element) {
   function onMouseMove(e) {
     if (!isDragging) return;
 
-    // Target positions based on cursor
     targetX = e.clientX - startX;
     targetY = e.clientY - startY;
 
-    // Keep top edge below taskbar (40px)
     if (targetY < 40) targetY = 40;
 
-    // Calculate instantaneous mouse velocity for tilt calculation
     velocityX = e.clientX - lastMouseX;
     velocityY = e.clientY - lastMouseY;
 
     lastMouseX = e.clientX;
     lastMouseY = e.clientY;
+
+    // --- DETECT SNAP ZONES (Edge snapping) ---
+    const threshold = 15;
+    if (e.clientX < threshold) {
+      currentSnapZone = 'left';
+      showSnapPreview(0, 40, window.innerWidth / 2, window.innerHeight - 40);
+    } else if (e.clientX > window.innerWidth - threshold) {
+      currentSnapZone = 'right';
+      showSnapPreview(window.innerWidth / 2, 40, window.innerWidth / 2, window.innerHeight - 40);
+    } else if (e.clientY < 40 + threshold) {
+      currentSnapZone = 'top';
+      showSnapPreview(0, 40, window.innerWidth, window.innerHeight - 40);
+    } else {
+      currentSnapZone = null;
+      if (snapPreview) snapPreview.style.display = 'none';
+    }
+  }
+
+  function showSnapPreview(x, y, w, h) {
+    if (!snapPreview) return;
+    snapPreview.style.display = 'block';
+    snapPreview.style.left = `${x}px`;
+    snapPreview.style.top = `${y}px`;
+    snapPreview.style.width = `${w}px`;
+    snapPreview.style.height = `${h}px`;
   }
 
   function updatePhysics() {
     if (isDragging) {
-      // Calculate smooth tilt based on velocity (clamped to +/- 25 degrees)
       let tiltX = Math.max(Math.min(velocityY * 1.2, 25), -25);
       let tiltY = Math.max(Math.min(velocityX * -1.2, 25), -25);
 
-      // Hardware-accelerated GPU transform
       element.style.top = `${targetY}px`;
       element.style.left = `${targetX}px`;
       element.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 
-      // Decay velocity gradually when cursor slows down
       velocityX *= 0.8;
       velocityY *= 0.8;
 
@@ -170,8 +234,27 @@ function makeDraggable(element) {
     }
 
     element.classList.remove('dragging');
-    
-    // Smoothly snap window back to flat angle
-    element.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+    if (snapPreview) snapPreview.style.display = 'none';
+
+    // Apply snap position if released in a snap zone
+    if (currentSnapZone) {
+      playUISound('snap');
+      element.style.transform = "none";
+      if (currentSnapZone === 'top') {
+        element.classList.add('maximized');
+      } else if (currentSnapZone === 'left') {
+        element.style.top = '40px';
+        element.style.left = '0px';
+        element.style.width = '50vw';
+        element.style.height = 'calc(100vh - 40px)';
+      } else if (currentSnapZone === 'right') {
+        element.style.top = '40px';
+        element.style.left = '50vw';
+        element.style.width = '50vw';
+        element.style.height = 'calc(100vh - 40px)';
+      }
+    } else {
+      element.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+    }
   }
 }
