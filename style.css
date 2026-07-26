@@ -39,10 +39,11 @@ body.light-theme {
   background-position: center;
 }
 
-.taskbar {
+
+.top-bar {
   width: 100%;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 35px;
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(15px);
   display: flex;
   justify-content: space-between;
@@ -52,44 +53,79 @@ body.light-theme {
   position: absolute;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Digital HUD / Glowing Glass Style for Clock */
-#clock {
-  font-family: 'Consolas', 'Courier New', monospace; /* Monospace keeps numbers from shifting width */
-  font-size: 15px;
-  font-weight: 700;
-  color: #00ffcc; /* Cyan neon tint */
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px 12px;
+
+.bottom-taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  background: rgba(15, 15, 20, 0.75);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 1000;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.taskbar-pins {
+  display: flex;
+  gap: 10px;
+}
+
+.taskbar-icon-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
-  border: 1px solid rgba(0, 255, 204, 0.3);
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
-  letter-spacing: 1px;
-  text-shadow: 0 0 5px rgba(0, 255, 204, 0.6);
-  user-select: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.taskbar-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
 }
 
-#clock:hover {
-  background: rgba(0, 255, 204, 0.15);
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+.taskbar-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 15px;
 }
 
-.theme-btn {
-  background: rgba(255,255,255,0.2);
-  border: none;
+.taskbar-apps {
+  display: flex;
+  gap: 8px;
+  flex-grow: 1;
+  overflow-x: auto;
+}
+
+.taskbar-tab {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
   cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
 }
-.theme-btn:hover { background: rgba(255,255,255,0.3); }
+.taskbar-tab:hover { background: rgba(255, 255, 255, 0.25); }
+
 
 .desktop-icons {
   position: absolute;
-  top: 60px;
+  top: 55px;
   left: 20px;
   display: flex;
   flex-direction: column;
@@ -120,16 +156,10 @@ body.light-theme {
   object-fit: contain;
 }
 
-/* App Opening Animation Keyframes */
+
 @keyframes windowOpenAnim {
-  0% { 
-    opacity: 0; 
-    transform: scale(0.7) translateY(40px); 
-  }
-  100% { 
-    opacity: 1; 
-    transform: scale(1) translateY(0); 
-  }
+  0% { opacity: 0; transform: scale(0.7) translateY(40px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .window {
@@ -149,20 +179,19 @@ body.light-theme {
   z-index: 10;
   resize: both;
   overflow: hidden; 
-  
-  /* Smooth snap-back when dropping the window */
   transform-origin: center center;
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Disable transition while dragging for instant 1:1 mouse reaction */
-.window.dragging {
-  transition: none; 
-}
+.window.dragging { transition: none; }
 
-/* Hide the old HTML water elements without changing index.html */
-.water-container {
-  display: none !important;
+.window.maximized {
+  top: 35px !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 83px) !important;
+  border-radius: 0 !important;
+  transform: none !important;
 }
 
 .window-header {
@@ -177,15 +206,20 @@ body.light-theme {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.close-btn {
-  background: rgba(255, 95, 86, 0.8);
+.window-controls { display: flex; gap: 6px; align-items: center; }
+
+.control-btn {
   border: none;
   width: 14px;
   height: 14px;
   border-radius: 50%;
   cursor: pointer;
 }
+
+.close-btn { background: rgba(255, 95, 86, 0.8); }
 .close-btn:hover { background: #ff5f56; }
+.max-btn { background: rgba(40, 200, 64, 0.8); }
+.max-btn:hover { background: #28c840; }
 
 .window-content {
   padding: 15px;
@@ -217,37 +251,17 @@ input[type="file"] {
   cursor: pointer;
   width: 100%;
 }
-/* --- Maximize & Snap Styling --- */
-.window.maximized {
-  top: 40px !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: calc(100vh - 40px) !important;
-  border-radius: 0 !important;
-  transform: none !important;
-}
 
-/* Header buttons container */
-.window-controls {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.control-btn {
+.theme-btn {
+  background: rgba(255,255,255,0.2);
   border: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
 }
+.theme-btn:hover { background: rgba(255,255,255,0.3); }
 
-.max-btn {
-  background: rgba(40, 200, 64, 0.8);
-}
-.max-btn:hover { background: #28c840; }
-
-/* Snap Indicator Overlay */
 #snap-preview {
   position: absolute;
   background: rgba(255, 255, 255, 0.15);
@@ -259,3 +273,14 @@ input[type="file"] {
   z-index: 999;
   transition: all 0.15s ease-out;
 }
+
+.calc-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-color);
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.calc-btn:hover { background: rgba(255, 255, 255, 0.25); }
